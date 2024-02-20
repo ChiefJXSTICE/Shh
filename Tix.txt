@@ -1,0 +1,20 @@
+local tixButtons = game.Workspace.DimensionsImp.Normal.TIXButtons:GetChildren()
+local buttonwewant = tixButtons[4]
+buttonwewant.Name = "TIX4" -- Renaming the button
+
+while true do
+    local args
+    if buttonwewant then
+        args = {
+            [1] = workspace:WaitForChild("DimensionsImp"):WaitForChild("Normal"):WaitForChild("TIXButtons"):WaitForChild(buttonwewant.Name)
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvents"):WaitForChild("TIXButtonRE"):FireServer(unpack(args))
+    end
+
+    args = {
+        [1] = "Pure"
+    }
+    game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvents"):WaitForChild("ALTButtonRE"):FireServer(unpack(args))
+
+    wait() -- Wait before repeating the loop
+end

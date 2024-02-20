@@ -1,0 +1,70 @@
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")  -- Add TweenService
+local localPlayer = Players.LocalPlayer
+
+local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local oresFolder = game.Workspace.DimensionsImp.Mining.Ores
+
+local MiningPart = game.ReplicatedStorage.LocalMiningFolder.PlayerArea
+
+
+-- Define the rarity order for Copper and Stone ores
+local rarityOrder = {
+	Copper = {"EnhancedCopper", "PureCopper", "BasicCopper"},
+	Stone = {"CursedStone", "DarkStone", "GodlyStone", "MagicalStone", "EnchantedStone", "BasicStone"}
+}
+
+-- Function to get ore by name
+local function getOreByName(oreType, name)
+	local folder = oresFolder:FindFirstChild(oreType)
+	if folder then
+		for _, ore in ipairs(folder:GetChildren()) do
+			if ore.Name == name then
+				return ore
+			end
+		end
+	end
+	return nil
+end
+
+local isMiningEnabled = false  -- Initially, mining is disabled
+
+-- Function to toggle mining on/off
+local function toggleMining()
+	isMiningEnabled = not isMiningEnabled
+end
+
+-- Listen for the "M" key press to toggle mining
+UserInputService.InputBegan:Connect(function(input)
+	if input.KeyCode == Enum.KeyCode.M then
+		toggleMining()
+	end
+end)
+
+-- Loop to search for ores
+while true do
+	if isMiningEnabled then
+		for oreType, rarities in pairs(rarityOrder) do
+			for _, rarity in ipairs(rarities) do
+				local ore = getOreByName(oreType, rarity)
+				if ore then
+					local endPosition = ore.Position
+					-- Keep the same vertical position as the player
+					endPosition = Vector3.new(endPosition.X, humanoidRootPart.Position.Y, endPosition.Z)
+
+					-- Tween the player's position
+					local tweenInfo = TweenInfo.new(.05)  -- Tween duration: 0.4 seconds
+					local tween = TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(endPosition)})
+					tween:Play()
+
+					-- Wait until the tween completes
+					tween.Completed:Wait()
+
+				end
+			end
+		end
+	end
+	task.wait()
+end

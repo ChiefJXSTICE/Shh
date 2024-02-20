@@ -1,0 +1,46 @@
+-- No Teleporting, Attacks Using Remote
+local player = game.Players.LocalPlayer
+local replicatedStorage = game.ReplicatedStorage
+local playerData = replicatedStorage.PlayerData["6828739"]
+local GoblinList = {
+    Goblin1 = "BabyGoblin[T1]",
+    Goblin2 = "BabyGoblin[T2]",
+    Goblin3 = "BabyGoblin[T3]"
+}
+
+local GoblinIndex = 3 -- Goblin3
+local GoblinOrder = {"Goblin1", "Goblin2", "Goblin3"}
+
+_G.loop1 = true
+local currentGoblin = GoblinList[GoblinOrder[GoblinIndex]]
+local isWaiting = false
+
+local function attackGoblin()
+    game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvents"):WaitForChild("MobsRE"):FireServer(currentGoblin)
+end
+
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.LeftBracket then
+        _G.loop1 = not _G.loop1
+    elseif input.KeyCode == Enum.KeyCode.RightBracket then
+        if _G.loop1 then
+            GoblinIndex = GoblinIndex % #GoblinOrder + 1
+            currentGoblin = GoblinList[GoblinOrder[GoblinIndex]]
+        end
+    end
+end)
+
+while true do
+    if _G.loop1 then
+        if playerData.HP.Value <= 13000 then
+            isWaiting = true
+        elseif playerData.HP.Value >= 1000000 and isWaiting then
+            isWaiting = false
+        end
+
+        if not isWaiting then
+            attackGoblin()
+        end
+    end
+    wait()
+end
