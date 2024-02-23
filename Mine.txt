@@ -7,9 +7,6 @@ local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 local oresFolder = game.Workspace.DimensionsImp.Mining.Ores
 
-local MiningPart = game.ReplicatedStorage.LocalMiningFolder.PlayerArea
-
-
 -- Define the rarity order for Copper and Stone ores
 local rarityOrder = {
 	Copper = {"EnhancedCopper", "PureCopper", "BasicCopper"},
